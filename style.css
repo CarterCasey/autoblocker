@@ -1,0 +1,66 @@
+body {
+	font-size: 18px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+a {
+	color: rgb(85, 172, 238);
+	text-decoration: none;
+}
+
+a:hover {
+	color: rgb(30, 117, 183);
+	text-decoration: none;
+}
+
+.deadlink {
+	color: grey;
+	text-decoration: none;
+}
+
+div.main {
+	text-align: center;
+	padding-top: 6%;
+}
+
+.main h1 {
+	font-size: 72px;
+}
+
+.main ul {
+	margin-left: 0px;
+	padding-left: 0px;
+	list-style-type: none;
+}
+
+.main li {
+	font-size: 32px;
+	padding: 20px;
+	display: inline;
+}
+
+div.training {
+	text-align: center;
+	padding-top: 6%;
+}
+
+#authorize {
+	font-size: 48px;
+}
+
+div.description {
+
+	text-align: justify;
+	max-width: 55%;
+
+	margin: 0 auto;
+}
+
+.main div.description {
+	padding-top: 40px;
+}
+
+.training div.description {
+	padding-top: 20px;
+	padding-bottom: 30px;
+}
