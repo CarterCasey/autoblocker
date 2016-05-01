@@ -1,5 +1,7 @@
 # MaxEnt AutoBlocker
-Home base for the AutoBlocker twitter app.
+Home base for the AutoBlocker twitter app. (AKA my final project for Natural Language Processing)
+
+*Note: The remaining contents of this readme describe a more ambitious project than the one I'm currently attempting. It's the proposal I wrote up while thinking about what topic I'd like to explore for my final project, and while it would be good of me to clean it up to be more descriptive of the contents of this repo, writing code will almost certainly come first.*  
 
 ## Purpose
 
