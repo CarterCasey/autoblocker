@@ -1,0 +1,13 @@
+{
+  "name": "data-collection",
+  "version": "0.0.0",
+  "main": "index.js",
+  "description": "The backend that deals with data collection for the MaxEnt AutoBlocker. Essentially, it will collect data from POST requests and save that data directly to disk (I'm not using mongo because the back-end will likely be deployed on a raspberry pi).",
+  "license": "UNLICENSED",
+  "repository": "git://github.com/CarterCasey/autoblocker.git",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "fs": "0.0.2"
+  }
+}
