@@ -1,30 +1,20 @@
 /* index.js
  * 
  * Back-end server for collecting user data during the training period
- * for the MaxEnt AutoBlocker. Has two components: user authorization,
- * and data collection.
+ * for the MaxEnt AutoBlocker. Gets user authorization, then requests
+ * ID, block list, following list, and followers list.
  * 
- * User Authorization:
- * 
- * 
- * Data Collection:
- * Recieves POST requests of the JSON form
- * { id : <int>, blocked: [<int>], friends: [<int>], followers: [<int>] }
- * 
- * On any failure to validate a request, returns 400 to user. Othwerise,
- * 200 is returned.
- * 
- * Data is saved directly to disk under the user's ID. Yes, this is silly,
- * but I'm planning on running this server on a Raspberry Pi, and since
- * MongoDB (the fastest way to get started for me) isn't available, I'm
- * sticking to the simplest possible form of storage. 
+ * All data is saved directly to disk - this is innefficient, yes,
+ * but I'm running off of a Rasperry Pi and can't install the
+ * database with which I'm most familiar (MongoDB).
  */
-var app = require("express")();
+var express = require("express");
 var body_parser = require("body-parser");
 var url = require("url");
 var fs = require("fs");
 
 var OAuth = require("oauth").OAuth;
+
 
 var MAX_LIST = 1000;
 
@@ -44,14 +34,24 @@ function loadSecret() { return fs.readFileSync("secret").toString().replace(/\s/
 
 function main ()
 {
+    var app = express();
+    
     app.use(body_parser.json()).use(body_parser.urlencoded({ extended: true }));
-    app.use(function (err, request, response, next) {
-        response.sendStatus(err.status);
-    });
+    app.use(function (err, rq, rs, nx) { response.sendStatus(err.status); });
     
     var oa = buildOAuth();
     
-    app.get("/auth/twitter", function (request, response) {
+    app.get("/auth/twitter", authorize(oa));
+    
+    // TODO: Clean up this mess of callbacks.
+    app.get("/collect_data", collectData(oa));
+
+    app.listen(8000);
+}
+
+function authorize(oa)
+{
+    return function (request, response) {
         oa.getOAuthRequestToken(function (err, token, secret, results) {
             if (err) {
                 response.sendStatus(err.status || 400);
@@ -63,16 +63,19 @@ function main ()
                 );
             } 
         });
-    });
-    
-    // TODO: Clean up this mess of callbacks.
-    app.get("/collect_data", function(request, full_response) {
+    }
+}
+
+
+function collectData (oa)
+{
+    return function (request, full_response) {
         var query = url.parse(request.url, true).query;
         
         var token = query.oauth_token;
         var secret = loadSecret();
         var verifier = query.oauth_verifier;
-        
+            
         oa.getOAuthAccessToken(token, secret, verifier, function (err, access_token, access_secret, results) {
             oa.get(USER_URL, access_token, access_secret, function (err, user_data, response) {
                 if (err) {
@@ -94,20 +97,18 @@ function main ()
                                         if (err) {
                                             full_response.sendStatus(err.status || 400);
                                         } else {
-                                            console.log(id, blocks_data, friends_data, followers_data);
                                             store(id, JSON.parse(blocks_data).ids, JSON.parse(friends_data).ids, JSON.parse(followers_data).ids);
+                                            full_response.redirect("http://autoblocker.cartercasey.com/thanks.html");
                                         }
                                     });
                                 }
                             });
                         }
                     });
-               }
-            }); 
+                }
+            });
         });
-    });
-
-    app.listen(8000);
+    }
 }
 
 function isInt (val) { return !isNaN(val) && val === parseInt(val); }
@@ -137,7 +138,7 @@ function buildOAuth ()
         "tZqXTGS6HsUqHutJjnbTmiEjR",
         secret,
         "1.0",
-        "http://127.0.0.1:8000/collect_data",
+        "http://home.cartercasey.com:8000/collect_data",
         "HMAC-SHA1"
     );
 }
