@@ -46,10 +46,20 @@ div.training {
 
 #authorize {
 	font-size: 48px;
+	padding: 20px;
+	padding-top: 15px;
+	border: 3px solid black;
+}
+
+#authorize:hover {
+	background: rgb(240, 240, 240);
+}
+
+#authbox {
+	margin: 30px;
 }
 
 div.description {
-
 	text-align: justify;
 	max-width: 55%;
 
