@@ -123,7 +123,7 @@ function store (id, blocks, friends, followers)
     };
 
     // WARNING: This will overwrite previously written data.
-    fs.writeFile(id.toString(), JSON.stringify(clean_data), function (err) {
+    fs.writeFile("user-data/" + id.toString(), JSON.stringify(clean_data), function (err) {
        if (err) console.error(err);
     });
 }
