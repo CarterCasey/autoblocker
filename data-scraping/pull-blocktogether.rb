@@ -37,7 +37,9 @@ def main
 end
 
 def fetchBlocks(pages)
+	puts "Scraping names from Block Together"
 	pages.map do |page|
+		puts "Page: " + page
 		Nokogiri::HTML(open(page)).css(".blocked-user a.screen-name").map do |a|
 			a.text.strip
 		end
@@ -68,16 +70,22 @@ def fetchTwitterData(screen_name, path)
 	all_ids = []
 	request_count = 0
 
+	puts "Requesting IDs from " + path
+
 	until cursor == "0"
+		puts "Requests: " + request_count.to_s
+		puts "Cursor: " + cursor
+		puts "IDs: " + all_ids.length.to_s
+
 		ids, cursor = token.get(path, :params => {
 			:screen_name => screen_name,
 			:stringify_ids => true,
-			:cursor => -1,
+			:cursor => cursor,
 		}, :opts => { :parse => :json }).parsed.values_at("ids", "next_cursor_str")
 
 		all_ids += ids
 
-		request_count++
+		request_count += 1
 
 		(sleep 900) if (request_count % 15 == 0)
 	end
